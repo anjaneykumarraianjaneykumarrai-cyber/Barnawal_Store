@@ -1,0 +1,83 @@
+{
+  "theme": "dark",
+  "archetype": "2 (Performance Pro) / Dark Mode Quick Commerce Adaption",
+  "typography": {
+    "headings": "Outfit",
+    "body": "Manrope",
+    "rules": {
+      "heading_spacing": "tracking-tight",
+      "h1_max": "text-3xl sm:text-4xl (Quick Commerce needs compact, scannable headings rather than giant editorial ones)",
+      "body_base": "text-sm md:text-base (dense e-commerce needs smaller default to fit more products)",
+      "letter_spacing_labels": "tracking-[0.15em] uppercase text-xs"
+    }
+  },
+  "colors": {
+    "background": "#09090B",
+    "surface": "#18181B",
+    "surface_elevated": "#27272A",
+    "primary": "#22C55E",
+    "primary_hover": "#16A34A",
+    "primary_foreground": "#000000",
+    "text_primary": "#FAFAFA",
+    "text_secondary": "#A1A1AA",
+    "text_tertiary": "#71717A",
+    "border": "#3F3F46",
+    "accent_warning": "#F59E0B",
+    "accent_danger": "#EF4444"
+  },
+  "spacing_and_layout": {
+    "bento_grid": "Tight gap-3 or gap-4 for e-commerce products, generous p-6 for admin dashboard panels",
+    "card_radius": "rounded-xl or rounded-2xl for modern app feel. Admin can use rounded-lg",
+    "mobile_first": true,
+    "max_width": "max-w-7xl mx-auto"
+  },
+  "components": {
+    "cards": "Subtle border (border-border/40), no heavy shadows in dark mode. Surface bg-[#18181B]",
+    "buttons": "Primary buttons #22C55E background with dark text #000000 for high contrast. Use rounded-lg or rounded-full for consumer app, rounded-md for admin.",
+    "inputs": "Shadcn default dark mode customized with focus:ring-primary. Dark bg.",
+    "navigation": "Bottom nav bar for mobile customer app. Fixed sidebar for admin dashboard.",
+    "badges": "Use soft green tinted bg (bg-green-500/20 text-green-400) for delivery tags or in-stock markers."
+  },
+  "features": [
+    "Persistent 'Delivery in 30 Minutes' banner/badge on Home, Product, Cart, and Checkout pages",
+    "Cash on Delivery (COD) only checkout",
+    "Demo OTP displayed on screen for testing during login/signup"
+  ],
+  "media": {
+    "image_urls": [
+      {
+        "category": "hero_banner",
+        "url": "https://images.unsplash.com/photo-1652262968340-b735524f9ae4?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2Njd8MHwxfHNlYXJjaHwyfHxncm9jZXJ5JTIwZGVsaXZlcnklMjBiYXNrZXR8ZW58MHx8fHwxNzgyMjAyMDczfDA&ixlib=rb-4.1.0&q=85",
+        "description": "baskets with fruits - Good for home top banner"
+      },
+      {
+        "category": "hero_delivery",
+        "url": "https://images.pexels.com/photos/6869047/pexels-photo-6869047.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "delivery cyclist - Use for checkout or delivery tracking"
+      },
+      {
+        "category": "category_vegetables",
+        "url": "https://images.unsplash.com/photo-1597362925123-77861d3fbac7?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwyfHxmcmVzaCUyMHZlZ2V0YWJsZXN8ZW58MHx8fHwxNzgyMjAyMDc4fDA&ixlib=rb-4.1.0&q=85",
+        "description": "pile of vegetables"
+      },
+      {
+        "category": "category_skincare",
+        "url": "https://images.unsplash.com/photo-1580870069867-74c57ee1bb07?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHwxfHxza2luY2FyZSUyMHByb2R1Y3RzfGVufDB8fHx8MTc4MjIwMjA3OXww&ixlib=rb-4.1.0&q=85",
+        "description": "skincare products"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "CRITICAL: Use .js extensions for React components, NOT .tsx.",
+    "Set up Tailwind CSS with dark mode as default.",
+    "Implement lucide-react for all icons.",
+    "Customer App UI: Mimic Blinkit with a mobile-first responsive layout (use bottom navigation on mobile, dense product grids).",
+    "Admin UI: Use modern cards, professional Shadcn tables, dark green theme accents, and a fixed sidebar.",
+    "Ensure 'Delivery in 30 Minutes' is persistently visible across Home, Product, Cart, and Checkout pages.",
+    "Implement demo OTP logic (e.g., render the OTP visible on the UI or in a toast) for auth testing.",
+    "Create two default admin users (Mobile 8381869505/admin123 and 8858351010/admin123) in the seeding script.",
+    "Only support Cash on Delivery (COD) in the checkout flow. No payment gateway integration required.",
+    "Seed products with auto-generated placeholder images or use the unsplash URLs provided in 'media' for corresponding categories.",
+    "CRITICAL: Apply 'data-testid' attributes to all interactive and key informational elements (buttons, inputs, links, forms)."
+  ]
+}

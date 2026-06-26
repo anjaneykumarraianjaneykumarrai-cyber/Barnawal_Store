@@ -1,0 +1,11 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512' role='img'>
+<rect width='512' height='512' fill='#ffffff'/>
+<rect x='24' y='24' width='464' height='464' rx='38' fill='#ffffff' stroke='#eef2f7' stroke-width='2'/>
+
+<ellipse cx='256' cy='410' rx='130' ry='20' fill='#e5e7eb'/>
+<path d='M141 110h230l24 270H117z' fill='#86efac' stroke='#d1d5db' stroke-width='7'/>
+<path d='M141 110h230l-18 74H159z' fill='#16a34a' opacity='.95'/>
+<rect x='164' y='205' width='184' height='95' rx='20' fill='#ffffff' opacity='.96'/>
+<circle cx='257' cy='247' r='7' fill='#f59e0b' opacity='.95'/><circle cx='195' cy='258' r='9' fill='#78350f' opacity='.95'/><circle cx='192' cy='303' r='6' fill='#92400e' opacity='.95'/><circle cx='321' cy='263' r='7' fill='#f59e0b' opacity='.95'/><circle cx='322' cy='313' r='8' fill='#fed7aa' opacity='.95'/><circle cx='306' cy='312' r='8' fill='#fed7aa' opacity='.95'/><circle cx='290' cy='254' r='8' fill='#fed7aa' opacity='.95'/><circle cx='293' cy='296' r='11' fill='#f59e0b' opacity='.95'/><circle cx='328' cy='283' r='6' fill='#92400e' opacity='.95'/><circle cx='249' cy='312' r='7' fill='#f59e0b' opacity='.95'/><circle cx='241' cy='247' r='7' fill='#f59e0b' opacity='.95'/><circle cx='248' cy='294' r='6' fill='#92400e' opacity='.95'/><circle cx='233' cy='297' r='7' fill='#f59e0b' opacity='.95'/><circle cx='176' cy='287' r='6' fill='#92400e' opacity='.95'/><circle cx='291' cy='270' r='9' fill='#78350f' opacity='.95'/><circle cx='285' cy='307' r='11' fill='#f59e0b' opacity='.95'/><circle cx='189' cy='267' r='11' fill='#f59e0b' opacity='.95'/><circle cx='302' cy='309' r='12' fill='#fed7aa' opacity='.95'/><circle cx='268' cy='255' r='10' fill='#92400e' opacity='.95'/><circle cx='233' cy='266' r='7' fill='#f59e0b' opacity='.95'/><circle cx='236' cy='262' r='10' fill='#92400e' opacity='.95'/><circle cx='319' cy='248' r='5' fill='#78350f' opacity='.95'/>
+
+</svg>

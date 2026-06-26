@@ -1,0 +1,11 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512' role='img'>
+<rect width='512' height='512' fill='#ffffff'/>
+<rect x='24' y='24' width='464' height='464' rx='38' fill='#ffffff' stroke='#eef2f7' stroke-width='2'/>
+
+<ellipse cx='256' cy='406' rx='118' ry='20' fill='#e5e7eb'/>
+<path d='M146 116h220l-24 280H170z' fill='#fff7ed' stroke='#e5e7eb' stroke-width='7'/>
+<path d='M164 142h184v78H164z' fill='#d97706' opacity='.85'/>
+<ellipse cx='256' cy='288' rx='78' ry='30' fill='#fef3c7' stroke='#fde68a' stroke-width='6'/>
+<circle cx='234' cy='267' r='11' fill='#eab308' opacity='.95'/><circle cx='203' cy='287' r='7' fill='#eab308' opacity='.95'/><circle cx='217' cy='296' r='7' fill='#eab308' opacity='.95'/><circle cx='210' cy='300' r='8' fill='#facc15' opacity='.95'/><circle cx='231' cy='265' r='11' fill='#eab308' opacity='.95'/><circle cx='251' cy='266' r='7' fill='#eab308' opacity='.95'/><circle cx='279' cy='270' r='9' fill='#fde68a' opacity='.95'/><circle cx='268' cy='269' r='8' fill='#facc15' opacity='.95'/><circle cx='202' cy='263' r='10' fill='#fef3c7' opacity='.95'/><circle cx='295' cy='295' r='9' fill='#fde68a' opacity='.95'/><circle cx='283' cy='273' r='7' fill='#eab308' opacity='.95'/><circle cx='273' cy='280' r='11' fill='#eab308' opacity='.95'/><circle cx='298' cy='298' r='12' fill='#facc15' opacity='.95'/><circle cx='244' cy='297' r='5' fill='#fde68a' opacity='.95'/><circle cx='201' cy='265' r='12' fill='#facc15' opacity='.95'/><circle cx='219' cy='285' r='5' fill='#fde68a' opacity='.95'/><circle cx='222' cy='277' r='11' fill='#eab308' opacity='.95'/><circle cx='233' cy='304' r='6' fill='#fef3c7' opacity='.95'/><circle cx='219' cy='288' r='7' fill='#eab308' opacity='.95'/><circle cx='320' cy='302' r='6' fill='#fef3c7' opacity='.95'/><circle cx='309' cy='301' r='9' fill='#fde68a' opacity='.95'/><circle cx='310' cy='267' r='8' fill='#facc15' opacity='.95'/><circle cx='191' cy='297' r='10' fill='#fef3c7' opacity='.95'/><circle cx='196' cy='273' r='5' fill='#fde68a' opacity='.95'/><circle cx='233' cy='281' r='5' fill='#fde68a' opacity='.95'/><circle cx='194' cy='268' r='6' fill='#fef3c7' opacity='.95'/>
+
+</svg>

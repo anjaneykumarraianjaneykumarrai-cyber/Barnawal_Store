@@ -1,0 +1,13 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512' role='img'>
+<rect width='512' height='512' fill='#ffffff'/>
+<rect x='24' y='24' width='464' height='464' rx='38' fill='#ffffff' stroke='#eef2f7' stroke-width='2'/>
+
+<ellipse cx='256' cy='416' rx='94' ry='20' fill='#e5e7eb'/>
+<rect x='222' y='72' width='68' height='48' rx='10' fill='#166534'/>
+<rect x='207' y='112' width='98' height='286' rx='34' fill='#ffffff' stroke='#d1d5db' stroke-width='8'/>
+<path d='M213 272h86v88c0 21-18 38-43 38s-43-17-43-38z' fill='#be123c' opacity='.82'/>
+<rect x='224' y='160' width='64' height='86' rx='14' fill='#fecdd3' stroke='#be123c' stroke-width='4'/>
+<circle cx='256' cy='205' r='20' fill='#be123c' opacity='.8'/>
+<path d='M242 112c0-22 28-22 28 0' fill='none' stroke='#e5e7eb' stroke-width='7'/>
+
+</svg>
