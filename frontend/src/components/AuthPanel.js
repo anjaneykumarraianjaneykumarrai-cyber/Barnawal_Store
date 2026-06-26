@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { api, saveSession } from "@/lib/api";
+import { fetchStore, readStore } from "@/lib/storeSettings";
 
 export default function AuthPanel({ mode = "customer", onDone }) {
   const [tab, setTab] = useState("login");
   const [otp, setOtp] = useState("");
   const [form, setForm] = useState({ full_name: "", mobile: "", email: "", identifier: "", password: "", confirm_password: "" });
+  const [store, setStore] = useState(readStore());
+  useEffect(() => { fetchStore().then(setStore); }, []);
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
   const requestOtp = async () => {
@@ -57,7 +60,7 @@ export default function AuthPanel({ mode = "customer", onDone }) {
       {mode !== "admin" && <button data-testid="request-demo-otp-button" className="ghost-btn" type="button" onClick={requestOtp}>Forgot password / Get OTP</button>}
       {otp && <div data-testid="demo-otp-visible-alert" className="otp-box">Demo OTP: <strong>{otp}</strong></div>}
       <button data-testid={`${mode}-auth-submit-button`} className="primary-btn" type="submit">{mode === "admin" ? "Login" : tab === "signup" ? "Signup" : "Login"}</button>
-      {mode === "admin" && <p data-testid="admin-default-login-info" className="muted-text">Use 8381869505 or 8858351010 · admin123</p>}
+      {mode === "admin" && <p data-testid="admin-default-login-info" className="muted-text">Use {(store.contacts || []).join(" or ")} · admin123</p>}
     </form>
   );
 }

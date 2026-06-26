@@ -3,19 +3,28 @@ import { Heart, Home, MessageCircle, Package, Search, ShoppingCart, User } from 
 import { useEffect, useState } from "react";
 import DeliveryBadge from "@/components/DeliveryBadge";
 import { readCart, whatsappOrderLink } from "@/lib/cart";
+import { fetchStore, readStore } from "@/lib/storeSettings";
 
 export default function AppShell({ children, search, setSearch, onAuthClick }) {
   const [count, setCount] = useState(readCart().reduce((s, i) => s + i.quantity, 0));
+  const [store, setStore] = useState(readStore());
   const navigate = useNavigate();
   useEffect(() => {
     const update = () => setCount(readCart().reduce((s, i) => s + i.quantity, 0));
+    const updateStore = () => setStore(readStore());
     window.addEventListener("cart-updated", update);
-    return () => window.removeEventListener("cart-updated", update);
+    window.addEventListener("store-settings-updated", updateStore);
+    fetchStore().then(updateStore);
+    return () => {
+      window.removeEventListener("cart-updated", update);
+      window.removeEventListener("store-settings-updated", updateStore);
+    };
   }, []);
+  const contactsText = (store.contacts || []).join(" · ");
   return (
     <div data-testid="customer-app-shell" className="customer-shell">
       <header data-testid="customer-header" className="customer-header">
-        <Link data-testid="store-logo-link" to="/" className="brand-mark"><span>B</span><div><strong data-testid="store-name-title">BARNAWAL GENERAL STORE</strong><small data-testid="store-contact-text">8381869505 · 8858351010</small></div></Link>
+        <Link data-testid="store-logo-link" to="/" className="brand-mark"><span>B</span><div><strong data-testid="store-name-title">{store.name || "BARNAWAL GENERAL STORE"}</strong><small data-testid="store-contact-text">{contactsText}</small></div></Link>
         <div data-testid="home-search-container" className="search-box"><Search size={18} /><input data-testid="product-search-input" value={search || ""} onChange={(e) => setSearch?.(e.target.value)} placeholder="Search atta, tea, shampoo..." /></div>
         <DeliveryBadge compact />
         <a data-testid="header-whatsapp-order-button" className="whatsapp-btn" href={whatsappOrderLink(readCart())} target="_blank" rel="noreferrer"><MessageCircle size={18} /> WhatsApp Order</a>

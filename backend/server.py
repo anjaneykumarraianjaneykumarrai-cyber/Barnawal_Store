@@ -40,6 +40,10 @@ JWT_ALGORITHM = "HS256"
 STORE_INFO = {
     "name": "BARNAWAL GENERAL STORE",
     "contacts": ["8381869505", "8858351010"],
+    "primary_whatsapp": "918381869505",
+    "secondary_whatsapp": "918858351010",
+    "primary_whatsapp_link": "https://wa.me/918381869505",
+    "secondary_whatsapp_link": "https://wa.me/918858351010",
     "delivery_time": "30 Minutes",
     "delivery_message": "Delivery in 30 Minutes",
     "payment_method": "Cash on Delivery",
@@ -500,6 +504,19 @@ async def seed_database() -> None:
 @app.on_event("startup")
 async def startup_seed():
     await seed_database()
+    # Idempotent migration: ensure WhatsApp fields exist on the live settings doc.
+    existing = await db.settings.find_one({"id": "store-settings"}, {"_id": 0})
+    if existing:
+        defaults = {
+            "primary_whatsapp": STORE_INFO["primary_whatsapp"],
+            "secondary_whatsapp": STORE_INFO["secondary_whatsapp"],
+            "primary_whatsapp_link": STORE_INFO["primary_whatsapp_link"],
+            "secondary_whatsapp_link": STORE_INFO["secondary_whatsapp_link"],
+            "contacts": STORE_INFO["contacts"],
+        }
+        missing = {k: v for k, v in defaults.items() if not existing.get(k)}
+        if missing:
+            await db.settings.update_one({"id": "store-settings"}, {"$set": {**missing, "updated_at": now_iso()}})
 
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
@@ -511,6 +528,31 @@ async def root():
 async def get_store():
     settings = await db.settings.find_one({"id": "store-settings"}, {"_id": 0})
     return settings or STORE_INFO
+
+
+@api_router.put("/admin/settings")
+async def update_admin_settings(payload: Dict[str, Any], admin: Dict[str, Any] = Depends(require_admin)):
+    allowed = {
+        "name", "contacts", "primary_whatsapp", "secondary_whatsapp",
+        "primary_whatsapp_link", "secondary_whatsapp_link",
+        "delivery_time", "delivery_message", "payment_method", "payment_note",
+        "min_order_amount", "delivery_fee",
+    }
+    update = {k: v for k, v in payload.items() if k in allowed}
+    # Normalize WhatsApp numbers: strip non-digits, build wa.me link automatically.
+    for key in ("primary_whatsapp", "secondary_whatsapp"):
+        if key in update and update[key]:
+            digits = "".join(ch for ch in str(update[key]) if ch.isdigit())
+            if len(digits) == 10:
+                digits = "91" + digits
+            update[key] = digits
+            update[f"{key}_link"] = f"https://wa.me/{digits}"
+    if "contacts" in update and isinstance(update["contacts"], list):
+        update["contacts"] = [str(c).strip() for c in update["contacts"] if str(c).strip()]
+    update["updated_at"] = now_iso()
+    await db.settings.update_one({"id": "store-settings"}, {"$set": update}, upsert=True)
+    settings = await db.settings.find_one({"id": "store-settings"}, {"_id": 0})
+    return settings
 
 
 @api_router.post("/auth/request-otp")

@@ -153,3 +153,11 @@ Build a Blinkit-style grocery and general store app for BARNAWAL GENERAL STORE w
 - Backend, frontend, and MongoDB services all running via supervisor.
 - Verified customer storefront (https://...preview.../) loads with 34 categories and 703+ seeded products.
 - Verified /admin login works with mobile 8381869505 / password admin123 — Admin dashboard shows KPIs, sales chart, top-selling products.
+
+## Implemented — 2026-01 WhatsApp Routing & Dynamic Settings
+- Added `primary_whatsapp` / `secondary_whatsapp` (and matching wa.me link fields) to backend STORE_INFO and the `settings` collection. Idempotent startup migration backfills these on the existing settings doc.
+- New endpoint `PUT /api/admin/settings` (admin-only) updates store name, both WhatsApp numbers (auto-normalized + wa.me link auto-built), customer-facing contacts, and delivery time.
+- Public `GET /api/store` now returns the live values for the customer app.
+- Frontend: new `lib/storeSettings.js` fetches and caches `/api/store`. Replaced all hardcoded `8381869505` / `8858351010` strings in `cart.js`, `AppShell.js`, `AdminApp.js` (topbar, order confirmation WhatsApp messages) and `AuthPanel.js` (admin login hint) with values read from store settings.
+- Admin Settings panel is now an editable form (`/admin → Settings`) with primary/secondary WhatsApp inputs, customer-facing contacts and delivery time. Saving updates DB and instantly re-routes all customer-side WhatsApp links via a `store-settings-updated` event.
+- Customer cart "Order Direct on WhatsApp" buttons now always route to the Primary Admin WhatsApp configured in admin settings (verified live: change → reflected immediately).

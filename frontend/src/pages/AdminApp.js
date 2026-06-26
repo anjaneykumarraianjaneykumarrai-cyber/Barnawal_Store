@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import AuthPanel from "@/components/AuthPanel";
 import { api, getUser, logout } from "@/lib/api";
+import { fetchStore, readStore, writeStore as writeStoreSettings } from "@/lib/storeSettings";
 
 // Build a wa.me link that opens WhatsApp with the message prefilled.
 // Defaults to +91 (India) if mobile is 10 digits without country code.
@@ -25,6 +26,7 @@ const menu = [
 export default function AdminApp() {
   const [user, setUser] = useState(getUser("admin"));
   const [active, setActive] = useState("dashboard");
+  const [store, setStore] = useState(readStore());
   const [dashboard, setDashboard] = useState(null);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -67,6 +69,14 @@ export default function AdminApp() {
   };
   useEffect(() => { load(); }, [isAdmin, q]);
 
+  useEffect(() => {
+    const updateStore = () => setStore(readStore());
+    window.addEventListener("store-settings-updated", updateStore);
+    fetchStore().then(updateStore);
+    return () => window.removeEventListener("store-settings-updated", updateStore);
+  }, []);
+  const storeContactsLine = (store.contacts || []).join(" / ");
+
   const loadNotifications = async () => {
     if (!isAdmin) return;
     try {
@@ -79,7 +89,7 @@ export default function AdminApp() {
           try { audioRef.current?.play().catch(() => {}); } catch (e) { /* ignore */ }
           const latest = data.notifications.find((n) => !n.is_read);
           if (latest) {
-            const confirmationMsg = `Hi ${latest.customer_name}, BARNAWAL GENERAL STORE has received your order ${latest.order_no} for ₹${latest.total_amount}. We are confirming your order and will deliver in 30 minutes. Pay on delivery. — 8381869505 / 8858351010`;
+            const confirmationMsg = `Hi ${latest.customer_name}, ${store.name || "BARNAWAL GENERAL STORE"} has received your order ${latest.order_no} for ₹${latest.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
             const link = buildWhatsAppLink(latest.mobile, confirmationMsg);
             try { window.open(link, "_blank", "noopener"); } catch (e) { /* ignore */ }
             toast.success(`🔔 New Order: ${latest.order_no} from ${latest.customer_name}`, {
@@ -197,7 +207,7 @@ export default function AdminApp() {
   return (
     <section data-testid="admin-app" className="admin-shell">
       <aside data-testid="admin-sidebar" className="admin-sidebar"><div data-testid="admin-brand" className="admin-brand"><span>B</span><b>BARNAWAL</b><small>30 Minute Delivery</small></div>{menu.map(([key, label, Icon]) => <button data-testid={`admin-menu-${key}-button`} key={key} className={active === key ? "active" : ""} onClick={() => setActive(key)}><Icon size={18} />{label}</button>)}<button data-testid="admin-logout-button" onClick={() => { logout("admin"); setUser(null); }}><LogOut size={18} />Logout</button></aside>
-      <main data-testid="admin-main" className="admin-main"><header data-testid="admin-topbar" className="admin-topbar"><div><h1 data-testid="admin-page-title">{menu.find((m) => m[0] === active)?.[1]}</h1><p data-testid="admin-store-contact">8381869505 · 8858351010 · COD Only</p></div><div className="admin-topbar-right"><div data-testid="admin-search" className="admin-search"><Search size={17} /><input data-testid="admin-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products" /></div><button data-testid="admin-notification-bell-button" className="notification-bell" onClick={() => setShowNotifications((s) => !s)} type="button"><Bell size={20} />{unreadCount > 0 && <span data-testid="notification-badge" className="notification-badge">{unreadCount}</span>}</button>{showNotifications && <NotificationsDropdown notifications={notifications} unreadCount={unreadCount} onClose={() => setShowNotifications(false)} markAllRead={markAllRead} openOrder={openOrderFromNotification} />}</div></header>
+      <main data-testid="admin-main" className="admin-main"><header data-testid="admin-topbar" className="admin-topbar"><div><h1 data-testid="admin-page-title">{menu.find((m) => m[0] === active)?.[1]}</h1><p data-testid="admin-store-contact">{storeContactsLine} · COD Only</p></div><div className="admin-topbar-right"><div data-testid="admin-search" className="admin-search"><Search size={17} /><input data-testid="admin-search-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search products" /></div><button data-testid="admin-notification-bell-button" className="notification-bell" onClick={() => setShowNotifications((s) => !s)} type="button"><Bell size={20} />{unreadCount > 0 && <span data-testid="notification-badge" className="notification-badge">{unreadCount}</span>}</button>{showNotifications && <NotificationsDropdown notifications={notifications} unreadCount={unreadCount} onClose={() => setShowNotifications(false)} markAllRead={markAllRead} openOrder={openOrderFromNotification} store={store} storeContactsLine={storeContactsLine} />}</div></header>
         {selectedOrder && <OrderDetailModal order={selectedOrder} onClose={() => setSelectedOrder(null)} updateOrder={updateOrder} />}
         {active === "dashboard" && <Dashboard dashboard={dashboard} />}
         {active === "products" && <Products products={products} categories={categories} form={productForm} setForm={setProductForm} addProduct={addProduct} deleteProduct={deleteProduct} />}
@@ -217,7 +227,7 @@ export default function AdminApp() {
   );
 }
 
-function NotificationsDropdown({ notifications, unreadCount, onClose, markAllRead, openOrder }) {
+function NotificationsDropdown({ notifications, unreadCount, onClose, markAllRead, openOrder, store = {}, storeContactsLine = "" }) {
   return (
     <div data-testid="notifications-dropdown" className="notifications-dropdown">
       <div className="notifications-header">
@@ -230,7 +240,7 @@ function NotificationsDropdown({ notifications, unreadCount, onClose, markAllRea
       <div className="notifications-list">
         {notifications.length === 0 && <p data-testid="no-notifications-text" className="muted-text">No notifications yet</p>}
         {notifications.map((n) => {
-          const confirmationMsg = `Hi ${n.customer_name}, BARNAWAL GENERAL STORE has received your order ${n.order_no} for ₹${n.total_amount}. We are confirming your order and will deliver in 30 minutes. Pay on delivery. — 8381869505 / 8858351010`;
+          const confirmationMsg = `Hi ${n.customer_name}, ${store.name || "BARNAWAL GENERAL STORE"} has received your order ${n.order_no} for ₹${n.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
           const waLink = buildWhatsAppLink(n.mobile, confirmationMsg);
           return (
             <div data-testid={`notification-item-wrapper-${n.id}`} key={n.id} className={`notification-item-wrapper ${n.is_read ? "read" : "unread"}`}>
@@ -666,7 +676,105 @@ function Reports({ reports }) {
 }
 
 function SettingsPanel() {
-  return <div data-testid="admin-settings" className="settings-grid"><div className="admin-panel"><h2 data-testid="store-settings-title">Store Details</h2><p data-testid="settings-store-name">BARNAWAL GENERAL STORE</p><p data-testid="settings-contact-numbers">8381869505, 8858351010</p><p data-testid="settings-delivery-time">Delivery Time: 30 Minutes</p></div><div className="admin-panel"><h2 data-testid="payment-settings-title">Payment Settings</h2><p data-testid="cod-enabled-setting">Cash On Delivery: Enabled</p><p data-testid="upi-disabled-setting">UPI: Disabled</p><p data-testid="cards-disabled-setting">Cards: Disabled</p><p data-testid="wallet-disabled-setting">Wallets: Disabled</p><p data-testid="netbanking-disabled-setting">Net Banking: Disabled</p></div><div className="admin-panel"><h2 data-testid="auth-settings-title">Authentication</h2><p data-testid="jwt-auth-setting">JWT Authentication Active</p><p data-testid="customer-login-setting">Customer Login & Signup Enabled</p></div></div>;
+  const [form, setForm] = useState(() => {
+    const s = readStore();
+    return {
+      name: s.name || "",
+      primary_whatsapp: s.primary_whatsapp || "",
+      secondary_whatsapp: s.secondary_whatsapp || "",
+      contact_primary: (s.contacts || [])[0] || "",
+      contact_secondary: (s.contacts || [])[1] || "",
+      delivery_time: s.delivery_time || "30 Minutes",
+    };
+  });
+  const [saving, setSaving] = useState(false);
+  const [savedAt, setSavedAt] = useState(null);
+  useEffect(() => {
+    fetchStore().then((s) => setForm({
+      name: s.name || "",
+      primary_whatsapp: s.primary_whatsapp || "",
+      secondary_whatsapp: s.secondary_whatsapp || "",
+      contact_primary: (s.contacts || [])[0] || "",
+      contact_secondary: (s.contacts || [])[1] || "",
+      delivery_time: s.delivery_time || "30 Minutes",
+    }));
+  }, []);
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const save = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload = {
+        name: form.name.trim(),
+        primary_whatsapp: form.primary_whatsapp.trim(),
+        secondary_whatsapp: form.secondary_whatsapp.trim(),
+        contacts: [form.contact_primary.trim(), form.contact_secondary.trim()].filter(Boolean),
+        delivery_time: form.delivery_time.trim(),
+      };
+      const { data } = await api.put("/admin/settings", payload);
+      writeStoreSettings(data);
+      setSavedAt(new Date().toLocaleTimeString());
+      toast.success("Store settings updated");
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Failed to update settings");
+    } finally {
+      setSaving(false);
+    }
+  };
+  const primaryLink = form.primary_whatsapp ? `https://wa.me/${form.primary_whatsapp.replace(/\D/g, "")}` : "";
+  const secondaryLink = form.secondary_whatsapp ? `https://wa.me/${form.secondary_whatsapp.replace(/\D/g, "")}` : "";
+  return (
+    <div data-testid="admin-settings" className="settings-grid">
+      <form onSubmit={save} className="admin-panel" data-testid="store-settings-form">
+        <h2 data-testid="store-settings-title">Store & WhatsApp Settings</h2>
+        <label className="settings-field">
+          <span>Store name</span>
+          <input data-testid="settings-store-name-input" value={form.name} onChange={set("name")} placeholder="BARNAWAL GENERAL STORE" />
+        </label>
+        <label className="settings-field">
+          <span>Primary Admin WhatsApp <small className="muted-text">(orders are routed here)</small></span>
+          <input data-testid="settings-primary-whatsapp-input" value={form.primary_whatsapp} onChange={set("primary_whatsapp")} placeholder="e.g. 918381869505 or 8381869505" />
+        </label>
+        <label className="settings-field">
+          <span>Secondary Admin WhatsApp</span>
+          <input data-testid="settings-secondary-whatsapp-input" value={form.secondary_whatsapp} onChange={set("secondary_whatsapp")} placeholder="e.g. 918858351010" />
+        </label>
+        <label className="settings-field">
+          <span>Customer-facing contact #1</span>
+          <input data-testid="settings-contact-primary-input" value={form.contact_primary} onChange={set("contact_primary")} placeholder="8381869505" />
+        </label>
+        <label className="settings-field">
+          <span>Customer-facing contact #2</span>
+          <input data-testid="settings-contact-secondary-input" value={form.contact_secondary} onChange={set("contact_secondary")} placeholder="8858351010" />
+        </label>
+        <label className="settings-field">
+          <span>Delivery time</span>
+          <input data-testid="settings-delivery-time-input" value={form.delivery_time} onChange={set("delivery_time")} placeholder="30 Minutes" />
+        </label>
+        <div className="admin-actions">
+          <button data-testid="settings-save-button" className="primary-btn" disabled={saving} type="submit">{saving ? "Saving..." : "Save settings"}</button>
+          {savedAt && <span data-testid="settings-saved-indicator" className="muted-text">Saved at {savedAt}</span>}
+        </div>
+        <div className="settings-preview" style={{ marginTop: "1rem" }}>
+          <p data-testid="settings-primary-whatsapp-link" className="muted-text">Primary click-to-chat: {primaryLink || "—"}</p>
+          <p data-testid="settings-secondary-whatsapp-link" className="muted-text">Secondary click-to-chat: {secondaryLink || "—"}</p>
+        </div>
+      </form>
+      <div className="admin-panel">
+        <h2 data-testid="payment-settings-title">Payment Settings</h2>
+        <p data-testid="cod-enabled-setting">Cash On Delivery: Enabled</p>
+        <p data-testid="upi-disabled-setting">UPI: Disabled</p>
+        <p data-testid="cards-disabled-setting">Cards: Disabled</p>
+        <p data-testid="wallet-disabled-setting">Wallets: Disabled</p>
+        <p data-testid="netbanking-disabled-setting">Net Banking: Disabled</p>
+      </div>
+      <div className="admin-panel">
+        <h2 data-testid="auth-settings-title">Authentication</h2>
+        <p data-testid="jwt-auth-setting">JWT Authentication Active</p>
+        <p data-testid="customer-login-setting">Customer Login & Signup Enabled</p>
+      </div>
+    </div>
+  );
 }
 
 function AdminTable({ title, rows = [], columns = [], action }) {

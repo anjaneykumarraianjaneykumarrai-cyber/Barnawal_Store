@@ -1,3 +1,5 @@
+import { readStore } from "@/lib/storeSettings";
+
 export function readCart() {
   try {
     return JSON.parse(localStorage.getItem("bgs_cart") || "[]");
@@ -35,7 +37,9 @@ export function cartTotal(items) {
 }
 
 export function whatsappOrderLink(items = []) {
-  const lines = ["Namaste BARNAWAL GENERAL STORE, I want to order:"];
+  const store = readStore();
+  const storeName = store.name || "BARNAWAL GENERAL STORE";
+  const lines = [`Namaste ${storeName}, I want to order:`];
   if (items.length) {
     items.forEach((item, index) => lines.push(`${index + 1}. ${item.product_name} (${item.variant}) x ${item.quantity} = ₹${item.selling_price * item.quantity}`));
     lines.push(`Total: ₹${cartTotal(items)}`);
@@ -43,6 +47,7 @@ export function whatsappOrderLink(items = []) {
     lines.push("Please help me place my grocery order.");
   }
   lines.push("Payment: Cash on Delivery");
-  lines.push("Delivery: 30 Minutes");
-  return `https://wa.me/918381869505?text=${encodeURIComponent(lines.join("\n"))}`;
+  lines.push(`Delivery: ${store.delivery_time || "30 Minutes"}`);
+  const number = store.primary_whatsapp || "918381869505";
+  return `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`;
 }

@@ -117,6 +117,11 @@ input:focus,select:focus,textarea:focus { border-color:var(--green); }
 .admin-two-col { display:grid; grid-template-columns:1.5fr 1fr; gap:1rem; }
 .admin-panel p { display:flex; justify-content:space-between; gap:1rem; border-bottom:1px solid #2a2a2f; padding:.55rem 0; color:var(--muted); }
 .mini-grid,.category-admin-grid,.settings-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(210px,1fr)); gap:.8rem; }
+.settings-grid > .admin-panel:first-child { grid-column:1/-1; }
+.settings-field { display:flex; flex-direction:column; gap:.35rem; margin:.55rem 0; color:var(--muted); }
+.settings-field > span { font-size:.82rem; color:#cfd8dc; }
+.settings-field input { background:#0f1316; color:#fff; border:1px solid #2a3036; border-radius:10px; padding:.6rem .8rem; font-size:.95rem; }
+.settings-field input:focus { outline:none; border-color:var(--green); }
 .mini-grid span { background:#101012; border:1px solid var(--line); border-radius:9px; padding:.65rem; }
 .admin-form { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:.75rem; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1rem; }
 .admin-form textarea { grid-column:span 2; min-height:46px; }
