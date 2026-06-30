@@ -122,6 +122,10 @@ input:focus,select:focus,textarea:focus { border-color:var(--green); }
 .settings-field > span { font-size:.82rem; color:#cfd8dc; }
 .settings-field input { background:#0f1316; color:#fff; border:1px solid #2a3036; border-radius:10px; padding:.6rem .8rem; font-size:.95rem; }
 .settings-field input:focus { outline:none; border-color:var(--green); }
+.admin-table-thumb { width:48px; height:48px; object-fit:cover; border-radius:8px; border:1px solid #2a2a2f; background:#0f1316; }
+.image-upload-field { display:flex; flex-direction:column; gap:.4rem; padding:.6rem .75rem; border:1px dashed #2a3036; border-radius:10px; background:#0f1316; color:#cfd8dc; font-size:.85rem; }
+.image-upload-field input[type="file"] { color:#cfd8dc; }
+.image-upload-preview { max-width:140px; max-height:140px; border-radius:10px; border:1px solid #2a3036; margin-top:.25rem; object-fit:cover; }
 .mini-grid span { background:#101012; border:1px solid var(--line); border-radius:9px; padding:.65rem; }
 .admin-form { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:.75rem; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:1rem; }
 .admin-form textarea { grid-column:span 2; min-height:46px; }

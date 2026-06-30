@@ -843,6 +843,19 @@ async def admin_add_product(payload: ProductUpsert, _: Dict[str, Any] = Depends(
     return {"product": doc, "message": "Product added"}
 
 
+@api_router.post("/admin/products/upload-image")
+async def admin_upload_product_image(file: UploadFile = File(...), _: Dict[str, Any] = Depends(require_admin)):
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Only image files are allowed")
+    contents = await file.read()
+    if len(contents) > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="Image must be smaller than 5MB")
+    import base64
+    encoded = base64.b64encode(contents).decode("ascii")
+    data_url = f"data:{file.content_type};base64,{encoded}"
+    return {"url": data_url, "size": len(contents), "content_type": file.content_type}
+
+
 @api_router.put("/admin/products/{product_id}")
 async def admin_update_product(product_id: str, payload: ProductUpsert, _: Dict[str, Any] = Depends(require_admin)):
     data = payload.model_dump()

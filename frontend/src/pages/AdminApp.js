@@ -526,7 +526,27 @@ function PriceSync({ products, categories, reload }) {
 
 function Products({ products, categories, form, setForm, addProduct, deleteProduct }) {
   const set = (k, v) => setForm({ ...form, [k]: v });
-  return <div data-testid="admin-products" className="admin-stack"><form data-testid="admin-add-product-form" className="admin-form" onSubmit={addProduct}>{["product_name", "hindi_name", "brand", "variant", "unit", "mrp", "selling_price", "stock_quantity"].map((key) => <input data-testid={`admin-product-${key}-input`} key={key} placeholder={key.replaceAll("_", " ")} value={form[key]} type={["mrp", "selling_price", "stock_quantity"].includes(key) ? "number" : "text"} onChange={(e) => set(key, e.target.value)} required={key === "product_name"} />)}<select data-testid="admin-product-category-select" value={form.category} onChange={(e) => set("category", e.target.value)}>{categories.map((c) => <option key={c.id}>{c.name}</option>)}</select><textarea data-testid="admin-product-description-input" placeholder="Description" value={form.description} onChange={(e) => set("description", e.target.value)} /><button data-testid="admin-add-product-submit-button" className="primary-btn">Add Product</button><button data-testid="admin-bulk-import-button" type="button" className="ghost-btn">Bulk Import Products</button></form><AdminTable title="Product Management" rows={products} columns={["product_name", "category", "sku", "mrp", "selling_price", "stock_quantity", "status"]} action={(row) => <button data-testid={`admin-delete-product-${row.id}`} onClick={() => deleteProduct(row.id)}>Delete</button>} /></div>;
+  const [uploading, setUploading] = useState(false);
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) { toast.error("Please choose an image file"); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error("Image must be under 5MB"); return; }
+    const data = new FormData();
+    data.append("file", file);
+    setUploading(true);
+    try {
+      const { data: res } = await api.post("/admin/products/upload-image", data, { headers: { "Content-Type": "multipart/form-data" } });
+      set("product_image", res.url);
+      toast.success("Image uploaded");
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Image upload failed");
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
+  };
+  return <div data-testid="admin-products" className="admin-stack"><form data-testid="admin-add-product-form" className="admin-form" onSubmit={addProduct}>{["product_name", "hindi_name", "brand", "variant", "unit", "mrp", "selling_price", "stock_quantity"].map((key) => <input data-testid={`admin-product-${key}-input`} key={key} placeholder={key.replaceAll("_", " ")} value={form[key]} type={["mrp", "selling_price", "stock_quantity"].includes(key) ? "number" : "text"} onChange={(e) => set(key, e.target.value)} required={key === "product_name"} />)}<select data-testid="admin-product-category-select" value={form.category} onChange={(e) => set("category", e.target.value)}>{categories.map((c) => <option key={c.id}>{c.name}</option>)}</select><textarea data-testid="admin-product-description-input" placeholder="Description" value={form.description} onChange={(e) => set("description", e.target.value)} /><label data-testid="admin-product-image-upload-field" className="image-upload-field"><span>Product image (optional)</span><input data-testid="admin-product-image-file-input" type="file" accept="image/*" onChange={handleImageUpload} disabled={uploading} />{uploading && <small className="muted-text">Uploading...</small>}{form.product_image && <img data-testid="admin-product-image-preview" src={form.product_image} alt="preview" className="image-upload-preview" />}{form.product_image && <button data-testid="admin-product-image-clear-button" type="button" className="ghost-btn" onClick={() => set("product_image", "")}>Remove image</button>}</label><button data-testid="admin-add-product-submit-button" className="primary-btn">Add Product</button><button data-testid="admin-bulk-import-button" type="button" className="ghost-btn">Bulk Import Products</button></form><AdminTable title="Product Management" rows={products} columns={["product_image", "product_name", "category", "sku", "mrp", "selling_price", "stock_quantity", "status"]} action={(row) => <button data-testid={`admin-delete-product-${row.id}`} onClick={() => deleteProduct(row.id)}>Delete</button>} /></div>;
 }
 
 function PriceItems({ products, categories, form, setForm, addProduct, updateProduct, deleteProduct }) {
@@ -778,5 +798,11 @@ function SettingsPanel() {
 }
 
 function AdminTable({ title, rows = [], columns = [], action }) {
-  return <div data-testid={`table-${title.toLowerCase().replaceAll(" ", "-")}`} className="admin-table-panel"><h2 data-testid={`table-title-${title.toLowerCase().replaceAll(" ", "-")}`}>{title}</h2><div className="admin-table-wrap"><table><thead><tr>{columns.map((c) => <th data-testid={`table-header-${c}`} key={c}>{c.replaceAll("_", " ")}</th>)}{action && <th data-testid="table-header-action">Action</th>}</tr></thead><tbody>{rows.map((row) => <tr data-testid={`table-row-${row.id || row.order_no || row.mobile}`} key={row.id || row.order_no || row.mobile}>{columns.map((c) => <td data-testid={`table-cell-${row.id || row.order_no || row.mobile}-${c}`} key={c}>{String(row[c] ?? "-").slice(0, 80)}</td>)}{action && <td data-testid={`table-action-${row.id || row.order_no}`}>{action(row)}</td>}</tr>)}</tbody></table></div></div>;
+  const renderCell = (row, c) => {
+    if (c === "product_image" || (c.includes("image") && typeof row[c] === "string" && (row[c].startsWith("http") || row[c].startsWith("data:")))) {
+      return row[c] ? <img src={row[c]} alt="" className="admin-table-thumb" /> : <span className="muted-text">—</span>;
+    }
+    return String(row[c] ?? "-").slice(0, 80);
+  };
+  return <div data-testid={`table-${title.toLowerCase().replaceAll(" ", "-")}`} className="admin-table-panel"><h2 data-testid={`table-title-${title.toLowerCase().replaceAll(" ", "-")}`}>{title}</h2><div className="admin-table-wrap"><table><thead><tr>{columns.map((c) => <th data-testid={`table-header-${c}`} key={c}>{c.replaceAll("_", " ")}</th>)}{action && <th data-testid="table-header-action">Action</th>}</tr></thead><tbody>{rows.map((row) => <tr data-testid={`table-row-${row.id || row.order_no || row.mobile}`} key={row.id || row.order_no || row.mobile}>{columns.map((c) => <td data-testid={`table-cell-${row.id || row.order_no || row.mobile}-${c}`} key={c}>{renderCell(row, c)}</td>)}{action && <td data-testid={`table-action-${row.id || row.order_no}`}>{action(row)}</td>}</tr>)}</tbody></table></div></div>;
 }
