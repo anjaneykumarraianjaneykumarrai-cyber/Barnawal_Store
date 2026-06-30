@@ -89,7 +89,7 @@ export default function AdminApp() {
           try { audioRef.current?.play().catch(() => {}); } catch (e) { /* ignore */ }
           const latest = data.notifications.find((n) => !n.is_read);
           if (latest) {
-            const confirmationMsg = `Hi ${latest.customer_name}, ${store.name || "BARNAWAL GENERAL STORE"} has received your order ${latest.order_no} for ₹${latest.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
+            const confirmationMsg = `Hi ${latest.customer_name}, ${store.name || "BARNAWAL PROVISION STORE"} has received your order ${latest.order_no} for ₹${latest.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
             const link = buildWhatsAppLink(latest.mobile, confirmationMsg);
             try { window.open(link, "_blank", "noopener"); } catch (e) { /* ignore */ }
             toast.success(`🔔 New Order: ${latest.order_no} from ${latest.customer_name}`, {
@@ -203,7 +203,7 @@ export default function AdminApp() {
   const deleteDeliveryBoy = async (id) => { await api.delete(`/admin/delivery-boys/${id}`); toast.success("Delivery boy removed"); load(); };
   const adjustStock = async (product, change_type) => { await api.post("/admin/inventory/adjust", { product_id: product.id, change_type, quantity: 5, note: "Quick admin adjustment" }); toast.success("Stock updated"); load(); };
 
-  if (!isAdmin) return <section data-testid="admin-login-page" className="admin-login"><div className="admin-login-card"><h1 data-testid="admin-login-heading">BARNAWAL GENERAL STORE</h1><p data-testid="admin-login-subtitle">Blinkit-style Admin Dashboard</p><AuthPanel mode="admin" onDone={(u) => setUser(u)} /></div></section>;
+  if (!isAdmin) return <section data-testid="admin-login-page" className="admin-login"><div className="admin-login-card"><h1 data-testid="admin-login-heading">BARNAWAL PROVISION STORE</h1><p data-testid="admin-login-subtitle">Blinkit-style Admin Dashboard</p><AuthPanel mode="admin" onDone={(u) => setUser(u)} /></div></section>;
   return (
     <section data-testid="admin-app" className="admin-shell">
       <aside data-testid="admin-sidebar" className="admin-sidebar"><div data-testid="admin-brand" className="admin-brand"><span>B</span><b>BARNAWAL</b><small>30 Minute Delivery</small></div>{menu.map(([key, label, Icon]) => <button data-testid={`admin-menu-${key}-button`} key={key} className={active === key ? "active" : ""} onClick={() => setActive(key)}><Icon size={18} />{label}</button>)}<button data-testid="admin-logout-button" onClick={() => { logout("admin"); setUser(null); }}><LogOut size={18} />Logout</button></aside>
@@ -240,7 +240,7 @@ function NotificationsDropdown({ notifications, unreadCount, onClose, markAllRea
       <div className="notifications-list">
         {notifications.length === 0 && <p data-testid="no-notifications-text" className="muted-text">No notifications yet</p>}
         {notifications.map((n) => {
-          const confirmationMsg = `Hi ${n.customer_name}, ${store.name || "BARNAWAL GENERAL STORE"} has received your order ${n.order_no} for ₹${n.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
+          const confirmationMsg = `Hi ${n.customer_name}, ${store.name || "BARNAWAL PROVISION STORE"} has received your order ${n.order_no} for ₹${n.total_amount}. We are confirming your order and will deliver in ${store.delivery_time || "30 minutes"}. Pay on delivery. — ${storeContactsLine}`;
           const waLink = buildWhatsAppLink(n.mobile, confirmationMsg);
           return (
             <div data-testid={`notification-item-wrapper-${n.id}`} key={n.id} className={`notification-item-wrapper ${n.is_read ? "read" : "unread"}`}>
@@ -749,7 +749,7 @@ function SettingsPanel() {
         <h2 data-testid="store-settings-title">Store & WhatsApp Settings</h2>
         <label className="settings-field">
           <span>Store name</span>
-          <input data-testid="settings-store-name-input" value={form.name} onChange={set("name")} placeholder="BARNAWAL GENERAL STORE" />
+          <input data-testid="settings-store-name-input" value={form.name} onChange={set("name")} placeholder="BARNAWAL PROVISION STORE" />
         </label>
         <label className="settings-field">
           <span>Primary Admin WhatsApp <small className="muted-text">(orders are routed here)</small></span>

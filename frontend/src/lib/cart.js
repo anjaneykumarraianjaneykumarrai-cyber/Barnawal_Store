@@ -38,7 +38,7 @@ export function cartTotal(items) {
 
 export function whatsappOrderLink(items = []) {
   const store = readStore();
-  const storeName = store.name || "BARNAWAL GENERAL STORE";
+  const storeName = store.name || "BARNAWAL PROVISION STORE";
   const lines = [`Namaste ${storeName}, I want to order:`];
   if (items.length) {
     items.forEach((item, index) => lines.push(`${index + 1}. ${item.product_name} (${item.variant}) x ${item.quantity} = ₹${item.selling_price * item.quantity}`));

@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 const KEY = "bgs_store_settings";
 
 const DEFAULTS = {
-  name: "BARNAWAL GENERAL STORE",
+  name: "BARNAWAL PROVISION STORE",
   contacts: ["8381869505", "8858351010"],
   primary_whatsapp: "918381869505",
   secondary_whatsapp: "918858351010",

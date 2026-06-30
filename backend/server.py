@@ -38,7 +38,7 @@ DEMO_OTP = os.environ.get("DEMO_OTP", "123456")
 JWT_ALGORITHM = "HS256"
 
 STORE_INFO = {
-    "name": "BARNAWAL GENERAL STORE",
+    "name": "BARNAWAL PROVISION STORE",
     "contacts": ["8381869505", "8858351010"],
     "primary_whatsapp": "918381869505",
     "secondary_whatsapp": "918858351010",
@@ -420,7 +420,7 @@ def product_doc(category: str, subcategory: str, name: str, variant: str, index:
         "variant": variant, "unit": split_unit(variant), "sku": sku,
         "barcode": str(8900000000000 + index), "mrp": prices["mrp"], "selling_price": prices["selling_price"],
         "stock_quantity": stock, "minimum_stock": 10, "product_image": CATEGORY_IMAGES.get(category, CATEGORY_IMAGES["Biscuits"]),
-        "description": f"{name} {variant} available at BARNAWAL GENERAL STORE with 30 minute delivery.",
+        "description": f"{name} {variant} available at BARNAWAL PROVISION STORE with 30 minute delivery.",
         "status": "out_of_stock" if stock == 0 else "active", "gst_rate": 5 if category in ["Tea", "Coffee", "Masala"] else 12,
         "rating": round(4.1 + (index % 9) / 10, 1), "review_count": 8 + index % 60,
         "featured": index % 9 == 0, "best_seller": index % 11 == 0,
@@ -521,7 +521,7 @@ async def startup_seed():
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "BARNAWAL GENERAL STORE API", "store": STORE_INFO}
+    return {"message": "BARNAWAL PROVISION STORE API", "store": STORE_INFO}
 
 
 @api_router.get("/store")

@@ -7,7 +7,7 @@ import ProductCard from "@/components/ProductCard";
 import { api } from "@/lib/api";
 import { addToCart } from "@/lib/cart";
 
-const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' fill='%2318181b'/%3E%3Crect x='70' y='80' width='460' height='380' rx='36' fill='%2327272a'/%3E%3Ccircle cx='210' cy='220' r='62' fill='%2322c55e'/%3E%3Cpath d='M130 390h340l-108-132-76 92-52-66z' fill='%2386efac'/%3E%3Ctext x='300' y='520' text-anchor='middle' fill='%23fafafa' font-family='Arial' font-size='28' font-weight='700'%3EBARNAWAL GENERAL STORE%3C/text%3E%3C/svg%3E";
+const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'%3E%3Crect width='600' height='600' fill='%2318181b'/%3E%3Crect x='70' y='80' width='460' height='380' rx='36' fill='%2327272a'/%3E%3Ccircle cx='210' cy='220' r='62' fill='%2322c55e'/%3E%3Cpath d='M130 390h340l-108-132-76 92-52-66z' fill='%2386efac'/%3E%3Ctext x='300' y='520' text-anchor='middle' fill='%23fafafa' font-family='Arial' font-size='28' font-weight='700'%3EBARNAWAL PROVISION STORE%3C/text%3E%3C/svg%3E";
 
 export default function ProductDetail() {
   const { id } = useParams();

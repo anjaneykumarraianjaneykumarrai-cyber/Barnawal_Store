@@ -37,7 +37,7 @@ def test_store_info_and_contacts(base_url, api_client):
     response = api_client.get(f"{base_url}/api/store", timeout=30)
     assert response.status_code == 200
     data = response.json()
-    assert data["name"] == "BARNAWAL GENERAL STORE"
+    assert data["name"] == "BARNAWAL PROVISION STORE"
     assert "8381869505" in data["contacts"] and "8858351010" in data["contacts"]
     assert "30" in data["delivery_message"]
 
