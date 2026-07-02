@@ -306,8 +306,7 @@ function OrderDetailModal({ order, onClose, updateOrder }) {
           <div className="order-modal-section">
             <h3 data-testid="order-total-title">Bill</h3>
             <p data-testid="order-subtotal">Subtotal: ₹{order.subtotal}</p>
-            <p data-testid="order-delivery">Delivery: ₹{order.delivery_fee}</p>
-            <p data-testid="order-gst">GST: ₹{order.gst}</p>
+            <p data-testid="order-delivery">Delivery: {order.delivery_fee === 0 ? "FREE" : `₹${order.delivery_fee}`}</p>
             <p data-testid="order-grand-total"><b>Total: ₹{order.total_amount}</b> ({order.payment_method})</p>
           </div>
           <div className="order-modal-section">

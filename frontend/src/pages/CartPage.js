@@ -8,6 +8,7 @@ import { cartTotal, readCart, updateQty, whatsappOrderLink } from "@/lib/cart";
 const fallbackImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%2327272a'/%3E%3Ccircle cx='62' cy='58' r='24' fill='%2322c55e'/%3E%3Cpath d='M28 120h104L96 78 75 104 61 86z' fill='%2386efac'/%3E%3C/svg%3E";
 
 const MIN_ORDER = 200;
+const FREE_DELIVERY_ABOVE = 500;
 const DELIVERY_FEE = 20;
 
 export default function CartPage() {
@@ -16,6 +17,8 @@ export default function CartPage() {
   const total = cartTotal(items);
   const meetsMin = total >= MIN_ORDER;
   const shortBy = Math.max(0, MIN_ORDER - total);
+  const deliveryFee = total > FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE;
+  const shortForFreeDelivery = Math.max(0, FREE_DELIVERY_ABOVE + 1 - total);
   return (
     <AppShell>
       <section data-testid="cart-page" className="cart-layout">
@@ -43,7 +46,12 @@ export default function CartPage() {
         <aside data-testid="cart-summary" className="summary-box">
           <h2 data-testid="cart-summary-title">Bill Summary</h2>
           <p data-testid="cart-subtotal-row">Subtotal <b>₹{total}</b></p>
-          <p data-testid="cart-delivery-row">Delivery Charge <b>₹{DELIVERY_FEE}</b></p>
+          <p data-testid="cart-delivery-row">Delivery Charge <b>{deliveryFee === 0 ? "FREE" : `₹${deliveryFee}`}</b></p>
+          {meetsMin && deliveryFee > 0 && (
+            <p data-testid="cart-free-delivery-hint" className="min-order-warning">
+              Add <b>₹{shortForFreeDelivery}</b> more to get FREE delivery
+            </p>
+          )}
           <p data-testid="cart-payment-row">Payment Method <b>Cash on Delivery</b></p>
           <p data-testid="cart-payment-note">Pay when your order is delivered.</p>
           {!meetsMin && items.length > 0 && (

@@ -717,10 +717,9 @@ async def create_order(payload: CreateOrderRequest, authorization: str = Header(
     subtotal = sum(item.quantity * item.selling_price for item in payload.items)
     if subtotal < 200:
         raise HTTPException(status_code=400, detail=f"Minimum order ₹200 required for home delivery. Your subtotal is ₹{subtotal}. Please add more items.")
-    delivery_fee = 20
-    gst = round(subtotal * 0.05, 2)
+    delivery_fee = 0 if subtotal > 500 else 20
     discount = 25 if payload.coupon_code and payload.coupon_code.upper() == "BGS25" else 0
-    total = round(subtotal + delivery_fee + gst - discount, 2)
+    total = round(subtotal + delivery_fee - discount, 2)
     order = {
         "id": str(uuid.uuid4()),
         "order_no": f"BGS-{random.randint(100000, 999999)}",
@@ -732,7 +731,6 @@ async def create_order(payload: CreateOrderRequest, authorization: str = Header(
         "items": [item.model_dump() for item in payload.items],
         "subtotal": subtotal,
         "delivery_fee": delivery_fee,
-        "gst": gst,
         "discount": discount,
         "total_amount": total,
         "payment_method": "Cash on Delivery",

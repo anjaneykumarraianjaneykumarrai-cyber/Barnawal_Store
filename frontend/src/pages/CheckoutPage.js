@@ -28,9 +28,8 @@ export default function CheckoutPage() {
   const MIN_ORDER = 200;
   const meetsMin = total >= MIN_ORDER;
   const shortBy = Math.max(0, MIN_ORDER - total);
-  const delivery = 20;
-  const gst = +(total * 0.05).toFixed(2);
-  const grand = +(total + delivery + gst).toFixed(2);
+  const delivery = total > 500 ? 0 : 20;
+  const grand = +(total + delivery).toFixed(2);
 
   const updateCustomer = (k, v) => setCustomer((p) => ({ ...p, [k]: v }));
   const updateAddress = (k, v) => setAddress((p) => ({ ...p, [k]: v }));
@@ -170,8 +169,7 @@ export default function CheckoutPage() {
           <h2 data-testid="checkout-summary-title">Order Summary</h2>
           <p data-testid="checkout-items-count">{items.length} items</p>
           <p data-testid="checkout-subtotal-row">Subtotal <b>₹{total}</b></p>
-          <p data-testid="checkout-delivery-row">Delivery Charge <b>₹{delivery}</b></p>
-          <p data-testid="checkout-gst-row">GST <b>₹{gst}</b></p>
+          <p data-testid="checkout-delivery-row">Delivery Charge <b>{delivery === 0 ? "FREE" : `₹${delivery}`}</b></p>
           <h3 data-testid="checkout-grand-total">Total ₹{grand}</h3>
           {!meetsMin && (
             <p data-testid="checkout-min-order-warning" className="min-order-warning">
